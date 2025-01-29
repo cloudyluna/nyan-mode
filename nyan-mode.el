@@ -282,15 +282,23 @@ This can be t or nil."
 
 ;;; Music handling.
 
-;; mplayer needs to be installed for that
+;; mpv needs to be installed for that
 (defvar nyan-music-process nil)
 
-(defun nyan-start-music ()
-  (interactive)
+(defun with-mpv (mpv-path music-file)
+  (format
+   "%s --no-video --loop --ytdl %s"
+   mpv-path music-file))
+
+(defun nyan-start-music (mpv-path)
+  (interactive (list (read-string "mpv path: " "mpv")))
   (unless nyan-music-process
-    (setq nyan-music-process (start-process-shell-command "nyan-music"
-                                                          "nyan-music"
-                                                          (concat "mplayer " nyan-music " -loop 0")))))
+    (setq nyan-music-process
+          (start-process-shell-command
+           "nyan-music"
+           "nyan-music"
+           (with-mpv mpv-path nyan-music)))))
+
 
 (defun nyan-stop-music ()
   (interactive)
